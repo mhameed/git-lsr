@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+LSR=~/bin/lsr
+tmpFile1=$(mktemp)
+tmpFile2=$(mktemp)
+
+processCommits() {
+    commitish1="$1"
+    commitish2="$2"
+
+    modifiedFiles=( $(git diff --numstat "$commitish1" "$commitish2" | awk '{ print $3 }') )
+    avg=100.00
+    distances=0
+    if [ ${#modifiedFiles[@]} -ne 0 ]; then
+        for file in ${modifiedFiles[@]}; do
+            git show $commitish1 -- "$file" > "$tmpFile1"
+            git show $commitish2 -- "$file" > "$tmpFile2"
+            # Using calc because bash does not support calculating with floats.
+            distances=$(calc ${distances} + $($LSR "$tmpFile1" "$tmpFile2") )
+            rm "$tmpFile1" "$tmpFile2"
+        done
+        avg=$(calc "round(${distances}/${#modifiedFiles[@]}*100,2)" | sed 's/\t//')
+    fi
+    c1Hash=$(git log -n 1 --format='%h' $commitish1)
+    c2Hash=$(git log -n 1 --format='%h' $commitish2)
+    echo "$c1Hash $c2Hash = $avg%"
+}
+
+
+prev=$1
+cur=$2
+shift; shift
+processCommits $prev $cur
+
+while [ -n "$1" ]; do
+    prev=$cur
+    cur=$1;
+    shift
+    processCommits $prev $cur
+done
+

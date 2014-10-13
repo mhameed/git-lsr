@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+import sys
+from Levenshtein import ratio
+with open(sys.argv[1]) as a, open(sys.argv[2]) as b:
+    print ratio(a.read(), b.read())
