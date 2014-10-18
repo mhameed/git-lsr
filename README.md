@@ -5,6 +5,9 @@ A measurement which can be used to identify complex/large commits, which should 
 
 doing ```git diff --numstat``` is one such measure, but it can easely be thrown off by something simple as reindenting code.
 
+For an explanation of the sentament: https://wiki.openstack.org/wiki/GitCommitMessages
+ 
+Question is when one is looking at history, how quickly can these commits be identified.
 
 # Demo #
 
