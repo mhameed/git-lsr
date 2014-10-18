@@ -12,8 +12,8 @@ processCommits() {
     distances=0
     if [ ${#modifiedFiles[@]} -ne 0 ]; then
         for file in ${modifiedFiles[@]}; do
-            git show $commitish1 -- "$file" > "$tmpFile1"
-            git show $commitish2 -- "$file" > "$tmpFile2"
+            git show ${commitish1}:${file} > "$tmpFile1"
+            git show ${commitish2}:${file} > "$tmpFile2"
             # Using calc because bash does not support calculating with floats.
             distances=$(calc ${distances} + $($LSR "$tmpFile1" "$tmpFile2") )
             rm "$tmpFile1" "$tmpFile2"
